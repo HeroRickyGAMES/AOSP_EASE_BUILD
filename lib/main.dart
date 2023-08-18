@@ -596,7 +596,7 @@ class _mainActivityState extends State<mainActivity> {
                           );
                         },
                       );
-                      String command = '. build/envsetup.sh ; lunch ${DeviceName}_user ; m';
+                      String command = 'cd /AOSP ; . build/envsetup.sh ; lunch ${DeviceName}_user ; m';
                       ProcessResult result = await Process.run('bash', ['-c', command]);
 
                       String error = result.stderr;
