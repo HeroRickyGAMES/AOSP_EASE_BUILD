@@ -576,34 +576,42 @@ class _mainActivityState extends State<mainActivity> {
               Container(
                 padding: const EdgeInsets.all(16),
                 child: ElevatedButton(onPressed: AOSPExists == true ? () async {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const AlertDialog(
-                        title: Text('Wait, building AOSP...'),
-                        actions: [
-                          Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        ],
+
+                  if(DeviceName == ''){
+                    FlutterToastr.show("The device name is empty!", context, duration: FlutterToastr.lengthShort, position:  FlutterToastr.bottom);
+                  }else{
+                    if(BrandName == ''){
+                      FlutterToastr.show("The brand name is empty!", context, duration: FlutterToastr.lengthShort, position:  FlutterToastr.bottom);
+                    }else{
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AlertDialog(
+                            title: Text('Wait, building AOSP...'),
+                            actions: [
+                              Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            ],
+                          );
+                        },
                       );
-                    },
-                  );
+                      String command = '. build/envsetup.sh ; lunch ${DeviceName}_user ; m';
+                      ProcessResult result = await Process.run('bash', ['-c', command]);
 
-                  String command = '. build/envsetup.sh ; lunch ${DeviceName}_user ; m';
-                  ProcessResult result = await Process.run('bash', ['-c', command]);
-
-                  String error = result.stderr;
-                  String processo = result.stdout;
-                  Navigator.of(context).pop();
-                  FlutterToastr.show("Done!", context, duration: FlutterToastr.lengthShort, position:  FlutterToastr.bottom);
-                  print("Resultado: $processo");
-                  print('Error: $error');
-                  setState(() {
-                    ListadeLogs.add(result.stdout);
-                    errors = error;
-                  });
-
+                      String error = result.stderr;
+                      String processo = result.stdout;
+                      Navigator.of(context).pop();
+                      FlutterToastr.show("Done!", context, duration: FlutterToastr.lengthShort, position:  FlutterToastr.bottom);
+                      print("Resultado: $processo");
+                      print('Error: $error');
+                      setState(() {
+                        ListadeLogs.add(result.stdout);
+                        ListadeLogs.add(error);
+                        errors = error;
+                      });
+                    }
+                  }
                 }: null, child: const Text('Build your AOSP')
                 ),
               ),
